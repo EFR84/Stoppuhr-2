@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stoppuhr</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2em;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    #time {
+      font-size: 3em;
+      margin-bottom: 1em;
+    }
+    button {
+      font-size: 1.2em;
+      margin: 0.5em;
+      padding: 0.5em 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .start { background-color: #4caf50; color: white; }
+    .stop { background-color: #f44336; color: white; }
+    .reset { background-color: #555; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Stoppuhr</h1>
+  <div id="time">00:00:00.000</div>
+  <button class="start" onclick="start()">Start</button>
+  <button class="stop" onclick="stop()">Stopp</button>
+  <button class="reset" onclick="reset()">Zurücksetzen</button>
+
+  <script>
+    let startTime;
+    let interval;
+    let running = false;
+
+    function formatTime(ms) {
+      const date = new Date(ms);
+      return date.toISOString().substr(11, 8) + '.' + String(ms % 1000).padStart(3, '0');
+    }
+
+    function updateDisplay() {
+      const now = Date.now();
+      const elapsed = now - startTime;
+      document.getElementById('time').textContent = formatTime(elapsed);
+    }
+
+    function start() {
+      if (!running) {
+        running = true;
+        startTime = Date.now() - (parseTime(document.getElementById('time').textContent));
+        interval = setInterval(updateDisplay, 10);
+      }
+    }
+
+    function stop() {
+      running = false;
+      clearInterval(interval);
+    }
+
+    function reset() {
+      stop();
+      document.getElementById('time').textContent = '00:00:00.000';
+    }
+
+    function parseTime(timeStr) {
+      const [h, m, sMs] = timeStr.split(':');
+      const [s, ms] = sMs.split('.');
+      return (
+        parseInt(h) * 3600000 +
+        parseInt(m) * 60000 +
+        parseInt(s) * 1000 +
+        parseInt(ms)
+      );
+    }
+  </script>
+</body>
+</html>
